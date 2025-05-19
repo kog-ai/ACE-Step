@@ -1,0 +1,57 @@
+[build-system]
+requires = ["flit_core >=3.2"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "ace_step"
+dynamic = ["version"]
+requires-python = ">=3.11"
+description = "Fork from ACE Step: A Step Towards Music Generation Foundation Model"
+readme = "README.md"
+authors = [{ name = "ACE Studio, StepFun AI" }]
+license = { file = "LICENSE" }
+
+dependencies = ["pydantic"]
+
+[project.optional-dependencies]
+train = ["peft", "tensorboard", "tensorboardX"]
+
+server = [
+    "diffusers==0.32.2",
+    "librosa==0.11.0",
+    "loguru==0.7.3",
+    "numpy",
+    "pypinyin==0.53.0",
+    "pytorch_lightning==2.5.1",
+    "soundfile==0.13.1",
+    "torch",
+    "torchaudio",
+    "torchvision",
+    "tqdm",
+    "transformers==4.50.0",
+    "py3langid==0.3.0",
+    "hangul-romanize==0.1.0",
+    "num2words==0.5.14",
+    "spacy==3.8.4",
+    "accelerate==1.6.0",
+    "cutlet",
+    "fugashi[unidic-lite]",
+    "click",
+    "peft",
+    "uvicorn",
+    "fastapi",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ace-step/ACE-Step"
+
+
+[tool.flit.module]
+name = "kog_ace_step"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+ignore = ["E402"]

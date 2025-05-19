@@ -1,0 +1,46 @@
+FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-devel AS build
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=UTC \
+    FLIT_ROOT_INSTALL=1 \
+    CUDA_HOME=/usr/local/cuda \
+    TORCH_CUDA_ARCH_LIST="8.0 8.9 9.0+PTX" \
+    HF_HOME=/data/hf_cache 
+
+# Install Python and system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    curl \
+    wget \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/bin/python3 /usr/bin/python
+
+# Set working directory
+WORKDIR /app
+
+RUN pip3 install --no-cache-dir .
+
+# Ensure target directories for volumes exist and have correct initial ownership
+RUN mkdir -p /app/outputs /app/checkpoints /app/logs && \
+    chown -R appuser:appuser /app/outputs /app/checkpoints /app/logs
+
+# Change ownership of app files to appuser
+RUN chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose the port the app runs on
+EXPOSE 8080
+
+VOLUME [ "/app/checkpoints", "/app/outputs", "/app/logs" ]
+
+# Set healthcheck
+HEALTHCHECK --interval=60s --timeout=10s --start-period=5s --retries=5 \
+  CMD curl -f http://localhost:8080/ || exit 1
+
+# Command to run the application with GPU support
+CMD ["python3", "server.py"]

@@ -19,7 +19,7 @@ import click
 @click.option(
     "--server_name",
     type=str,
-    default="127.0.0.1",
+    default="0.0.0.0",
     help="The server name to use for the Gradio app.",
 )
 @click.option(
@@ -63,7 +63,7 @@ def main(checkpoint_path, server_name, port, device_id, share, bf16, torch_compi
         dtype="bfloat16" if bf16 else "float32",
         torch_compile=torch_compile,
         cpu_offload=cpu_offload,
-        overlapped_decode=overlapped_decode
+        overlapped_decode=overlapped_decode,
     )
     data_sampler = DataSampler()
 
